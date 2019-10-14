@@ -3,7 +3,6 @@ package kata.ex01.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +17,7 @@ public class HighwayDrive implements Serializable {
 
     private Driver driver;
 
-    public boolean isDriving(LocalDate date, LocalTime fromTime, LocalTime toTime) {
-        var from = date.atTime(fromTime);
-        var to = date.atTime(toTime);
-
+    public boolean isDriving(LocalDateTime from, LocalDateTime to) {
         return !(enteredAt.isAfter(to) || exitedAt.isBefore(from));
     }
 
