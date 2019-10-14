@@ -13,11 +13,7 @@ public class HolidayDiscount extends Discount {
 
     @Override
     protected int getRate() {
-        if (!isDiscount()) {
-            return 0;
-        }
-
-        return 30;
+        return isDiscount() ? 30 : 0;
     }
 
     private boolean isDiscount() {

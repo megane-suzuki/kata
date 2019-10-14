@@ -5,7 +5,6 @@ import kata.ex01.model.RouteType;
 import kata.ex01.util.HolidayUtils;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 
 public class WeekdayDiscount extends Discount {
     public WeekdayDiscount(HighwayDrive drive) {
@@ -18,15 +17,7 @@ public class WeekdayDiscount extends Discount {
             return 0;
         }
 
-        if (isMiddleUser()) {
-            return 30;
-        }
-
-        if (isHeavyUser()) {
-            return 50;
-        }
-
-        return 0;
+        return isMiddleUsed() ? 30 : isHeavyUsed() ? 50 : 0;
     }
 
     private boolean isDiscount() {
@@ -36,7 +27,7 @@ public class WeekdayDiscount extends Discount {
         }
 
         for (LocalDate date : drive.getDriveDates()) {
-            if (isWeekday(date) && isDiscountTime(date, drive)) {
+            if (!HolidayUtils.isHoliday(date) && isDrivingInDiscountTime(date)) {
                 return true;
             }
         }
@@ -44,27 +35,23 @@ public class WeekdayDiscount extends Discount {
         return false;
     }
 
-    private boolean isWeekday(LocalDate date) {
-        return !HolidayUtils.isHoliday(date) && !HolidayUtils.isHoliday(date);
+    private boolean isDrivingInDiscountTime(LocalDate date) {
+        var morningFrom = date.atTime(6, 0);
+        var morningTo = date.atTime(9, 0);
+        var eveningFrom = date.atTime(17, 0);
+        var eveningTo = date.atTime(20, 0);
+
+        return drive.isDriving(morningFrom, morningTo)
+                || drive.isDriving(eveningFrom, eveningTo);
     }
 
-    private boolean isDiscountTime(LocalDate date, HighwayDrive drive) {
-        var morningFrom = LocalTime.of(6, 0);
-        var morningTo = LocalTime.of(9, 0);
-        var eveningFrom = LocalTime.of(17, 0);
-        var eveningTo = LocalTime.of(20, 0);
-
-        return drive.isDriving(date, morningFrom, morningTo)
-                || drive.isDriving(date, eveningFrom, eveningTo);
-    }
-
-    private boolean isMiddleUser() {
+    private boolean isMiddleUsed() {
         var count = drive.getDriver().getCountPerMonth();
 
         return 5 <= count && count <= 9;
     }
 
-    private boolean isHeavyUser() {
+    private boolean isHeavyUsed() {
         var count = drive.getDriver().getCountPerMonth();
 
         return 10 <= count;

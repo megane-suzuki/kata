@@ -12,19 +12,15 @@ public class MidnightDiscount extends Discount {
 
     @Override
     protected int getRate() {
-        if (!isDiscount()) {
-            return 0;
-        }
-
-        return 30;
+        return isDiscount() ? 30 : 0;
     }
 
     private boolean isDiscount() {
-        var from = LocalTime.of(0, 0);
-        var to = LocalTime.of(4, 0);
-
         for (LocalDate date : drive.getDriveDates()) {
-            if (drive.isDriving(date, from, to)) {
+            var from = date.atTime(0, 0);
+            var to = date.atTime(4, 0);
+
+            if (drive.isDriving(from, to)) {
                 return true;
             }
         }
