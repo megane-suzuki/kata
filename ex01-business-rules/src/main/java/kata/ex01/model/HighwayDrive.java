@@ -1,8 +1,11 @@
 package kata.ex01.model;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author kawasima
@@ -15,19 +18,19 @@ public class HighwayDrive implements Serializable {
 
     private Driver driver;
 
-    public HighwayDrive() {
+    public boolean isDriving(LocalDate date, LocalTime fromTime, LocalTime toTime) {
+        var from = date.atTime(fromTime);
+        var to = date.atTime(toTime);
+
+        return !(enteredAt.isAfter(to) || exitedAt.isBefore(from));
     }
 
-    public boolean isDriving(LocalTime from, LocalTime to)
-    {
-        var enteredAt = this.getEnteredAt().toLocalDate();
-        var exitedAt = this.getExitedAt().toLocalDate();
-        var threshold = new Threshold(from, to, enteredAt, exitedAt);
+    public List<LocalDate> getDriveDates() {
+        List<LocalDate> dates = new ArrayList<>();
+        dates.add(enteredAt.toLocalDate());
+        dates.add(exitedAt.toLocalDate());
 
-        return ((this.getEnteredAt().isBefore(threshold.getReToday()) || this.getEnteredAt().isEqual(threshold.getReToday()))
-                && (this.getExitedAt().isAfter(threshold.getRsToday()) || this.getExitedAt().isEqual(threshold.getRsToday())))
-                || ((this.getEnteredAt().isBefore(threshold.getReTomorrow()) || this.getEnteredAt().isEqual(threshold.getReTomorrow()))
-                && (this.getExitedAt().isAfter(threshold.getRsTomorrow()) || this.getExitedAt().isEqual(threshold.getRsTomorrow())));
+        return dates;
     }
 
     public LocalDateTime getEnteredAt() {
@@ -68,9 +71,5 @@ public class HighwayDrive implements Serializable {
 
     public void setDriver(Driver driver) {
         this.driver = driver;
-    }
-
-    public String toString() {
-        return "HighwayDrive(enteredAt=" + this.getEnteredAt() + ", exitedAt=" + this.getExitedAt() + ", vehicleFamily=" + this.getVehicleFamily() + ", routeType=" + this.getRouteType() + ", driver=" + this.getDriver() + ")";
     }
 }
